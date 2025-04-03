@@ -9,8 +9,8 @@ I will map my thought process in this file.
  - Create console project
  - Handle the command arguments
  - Deal with directories
- - Deal with copying new/changed files
- - Deal with removing old files
+ - Deal with copying new/changed files/folders
+ - Deal with removing old files/folders
  - Add timer
  - Add logging
  - Think about edge cases (locked files, hidden files, ...)
@@ -23,3 +23,4 @@ I will map my thought process in this file.
 0) Notes
  - What if the interval is shorter than the lenght of the sync process?
  - Could/Should the user add missing arguments at runtime?
+ - Check for enough disk space?
