@@ -24,3 +24,4 @@ I will map my thought process in this file.
  - What if the interval is shorter than the lenght of the sync process?
  - Could/Should the user add missing arguments at runtime?
  - Check for enough disk space?
+ - Exit on error? Or continue...
