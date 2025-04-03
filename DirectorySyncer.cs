@@ -10,6 +10,7 @@ public class DirectorySyncer
     private readonly string _logPath;
     private readonly int _syncInterval;
     private Timer? _timer;
+    private StreamWriter? _logWriter;
 
     public DirectorySyncer(string sourcePath, string replicaPath, int syncInterval, string logPath)
     {
@@ -25,12 +26,19 @@ public class DirectorySyncer
     {
         if (!Directory.Exists(_sourcePath))
         {
-            Console.WriteLine($"Source path '{_sourcePath}' does not exist.");
+            Log($"Source path '{_sourcePath}' does not exist.");
             Environment.Exit(1);
         }
 
-        TryCreateDirectory(_replicaPath, true);
-        TryCreateDirectory(_logPath, true);
+        if (!Directory.Exists(_replicaPath))
+        {
+            TryCreateDirectory(_replicaPath, true);
+        }
+
+        if (!Directory.Exists(_logPath))
+        {
+            TryCreateDirectory(_logPath, true);
+        }
     }
 
     public void StartSync()
@@ -40,17 +48,23 @@ public class DirectorySyncer
 
     private void SyncDirectories(object? state)
     {
-        try
+        var logFilePath = Path.Combine(_logPath, $"sync_{DateTime.Now:yyyyMMdd_HHmmss}.log");
+
+        using (_logWriter = new StreamWriter(logFilePath, true) { AutoFlush = true })
         {
-            Console.WriteLine($"Syncing... {DateTime.Now}");
-            CreateDirectories();
-            DeleteDirectories();
-            CopyFiles();
-            DeleteFiles();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error: {ex.Message}");
+            try
+            {
+                Log($"Syncing started");
+                CreateDirectories();
+                DeleteDirectories();
+                CopyFiles();
+                DeleteFiles();
+                Log($"Syncing finished");
+            }
+            catch (Exception ex)
+            {
+                Log($"Error: {ex.Message}");
+            }
         }
     }
 
@@ -61,6 +75,7 @@ public class DirectorySyncer
         foreach (var dir in sourceDirs)
         {
             var replicaDir = dir.Replace(_sourcePath, _replicaPath);
+            if (Directory.Exists(replicaDir)) continue;
             TryCreateDirectory(replicaDir);
         }
     }
@@ -110,10 +125,11 @@ public class DirectorySyncer
         try
         {
             Directory.CreateDirectory(path);
+            Log($"Creating directory '{path}'");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"An error occurred while creating directory '{path}': {ex.Message}");
+            Log($"An error occurred while creating directory '{path}': {ex.Message}");
             if (exitOnError) Environment.Exit(1);
         }
     }
@@ -123,10 +139,11 @@ public class DirectorySyncer
         try
         {
             Directory.Delete(path, true);
+            Log($"Deleting directory '{path}'");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"An error occurred while deleting directory '{path}': {ex.Message}");
+            Log($"An error occurred while deleting directory '{path}': {ex.Message}");
         }
     }
 
@@ -140,7 +157,7 @@ public class DirectorySyncer
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"An error occurred while comparing files '{file1}' and '{file2}': {ex.Message}");
+            Log($"An error occurred while comparing files '{file1}' and '{file2}': {ex.Message}");
             return false;
         }
     }
@@ -152,10 +169,11 @@ public class DirectorySyncer
             try
             {
                 File.Copy(sourceFile, replicaFile, true);
+                Log($"Copying file '{replicaFile}'");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred while copying file from '{sourceFile}' to '{replicaFile}': {ex.Message}");
+                Log($"An error occurred while copying file from '{sourceFile}' to '{replicaFile}': {ex.Message}");
             }
         }
     }
@@ -165,10 +183,18 @@ public class DirectorySyncer
         try
         {
             File.Delete(path);
+            Log($"Deleting file '{path}'");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"An error occurred while deleting file '{path}': {ex.Message}");
+            Log($"An error occurred while deleting file '{path}': {ex.Message}");
         }
+    }
+
+    private void Log(string message)
+    {
+        string logMessage = $"[{DateTime.Now}] {message}";
+        Console.WriteLine(logMessage);
+        _logWriter?.WriteLine(logMessage);
     }
 }

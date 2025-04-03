@@ -21,10 +21,11 @@ class Program
         }
         var logPath = args[3];
 
+        Console.WriteLine("Press any key to stop...");
+
         _directorySyncer = new DirectorySyncer(sourcePath, replicaPath, syncInterval, logPath);
         _directorySyncer.StartSync();
 
-        Console.WriteLine("Press any key to stop...");
         Console.ReadKey();
     }
 }

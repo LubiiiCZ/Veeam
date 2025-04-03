@@ -14,10 +14,10 @@ I will map my thought process in this file.
  - Add timer
  - Add logging
  - Think about edge cases (locked files, hidden files, ...)
+    - hidden & readonly files are copied as well
  - Add exception handling
  - Refactor the whole solution to a presentable form
  - Add comments
- - Add tests - might spark new ideas
  - Write final report and explanation of the solution
 
 0) Notes
@@ -25,3 +25,5 @@ I will map my thought process in this file.
  - Could/Should the user add missing arguments at runtime?
  - Check for enough disk space?
  - Exit on error? Or continue...
+ - Log each sync iteration to a separate file? or have just one file...
+ - Should add some kind of testing suite - but that would a bigger project...
