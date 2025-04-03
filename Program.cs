@@ -10,7 +10,9 @@ class Program
     public static void Main(string[] args)
     {
         VerifyArguments(args);
-        VerifyFolders();
+        VerifyDirectories();
+        CreateDirectories(_sourcePath, _replicaPath);
+        RemoveDirectories(_sourcePath, _replicaPath);
     }
 
     private static void VerifyArguments(string[] args)
@@ -31,7 +33,7 @@ class Program
         _logPath = args[3];
     }
 
-    private static void VerifyFolders()
+    private static void VerifyDirectories()
     {
         if (!Directory.Exists(_sourcePath))
         {
@@ -39,24 +41,33 @@ class Program
             return;
         }
 
-        try
-        {
-            Directory.CreateDirectory(_replicaPath);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"An error occurred while creating replica folder '{_replicaPath}': {ex.Message}");
-            return;
-        }
+        Util.TryCreateDirectory(_replicaPath);
+        Util.TryCreateDirectory(_logPath);
+    }
 
-        try
+    private static void CreateDirectories(string source, string replica)
+    {
+        var sourceDirs = Directory.GetDirectories(source, "*", SearchOption.AllDirectories);
+
+        foreach (var dir in sourceDirs)
         {
-            Directory.CreateDirectory(_logPath);
+            var replicaDir = dir.Replace(source, replica);
+            Util.TryCreateDirectory(replicaDir);
         }
-        catch (Exception ex)
+    }
+
+    private static void RemoveDirectories(string source, string replica)
+    {
+        var replicaDirs = Directory.GetDirectories(replica, "*", SearchOption.AllDirectories);
+
+        foreach (var dir in replicaDirs)
         {
-            Console.WriteLine($"An error occurred while creating log folder '{_logPath}': {ex.Message}");
-            return;
+            if (!Directory.Exists(dir)) continue; //Could have been deleted as part of the sync process
+
+            var sourceDir = dir.Replace(replica, source);
+            if (Directory.Exists(sourceDir)) continue; //Source directory exists, so we don't need to delete the replica
+
+            Util.TryDeleteWholeDirectory(dir);
         }
     }
 }
