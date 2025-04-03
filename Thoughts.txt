@@ -19,3 +19,7 @@ I will map my thought process in this file.
  - Add comments
  - Add tests - might spark new ideas
  - Write final report and explanation of the solution
+
+0) Notes
+ - What if the interval is shorter than the lenght of the sync process?
+ - Could/Should the user add missing arguments at runtime?
