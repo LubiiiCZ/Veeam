@@ -20,10 +20,17 @@ I will map my thought process in this file.
  - Add comments
  - Write final report and explanation of the solution
 
-0) Notes
+3) Notes
  - What if the interval is shorter than the lenght of the sync process?
  - Could/Should the user add missing arguments at runtime?
  - Check for enough disk space?
  - Exit on error? Or continue...
  - Log each sync iteration to a separate file? or have just one file...
  - Should add some kind of testing suite - but that would a bigger project...
+
+4) Final words
+Very interesting task, I enjoyed it.
+Spent around a manday (8h) on the solution.
+The whole genesis can be seen through the git log.
+Thank you for the opportunity.
+https://github.com/LubiiiCZ/Veeam
