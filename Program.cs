@@ -12,7 +12,9 @@ class Program
         VerifyArguments(args);
         VerifyDirectories();
         CreateDirectories(_sourcePath, _replicaPath);
-        RemoveDirectories(_sourcePath, _replicaPath);
+        DeleteDirectories(_sourcePath, _replicaPath);
+        CopyFiles(_sourcePath, _replicaPath);
+        DeleteFiles(_sourcePath, _replicaPath);
     }
 
     private static void VerifyArguments(string[] args)
@@ -56,7 +58,7 @@ class Program
         }
     }
 
-    private static void RemoveDirectories(string source, string replica)
+    private static void DeleteDirectories(string source, string replica)
     {
         var replicaDirs = Directory.GetDirectories(replica, "*", SearchOption.AllDirectories);
 
@@ -68,6 +70,31 @@ class Program
             if (Directory.Exists(sourceDir)) continue; //Source directory exists, so we don't need to delete the replica
 
             Util.TryDeleteWholeDirectory(dir);
+        }
+    }
+
+    private static void CopyFiles(string source, string replica)
+    {
+        var sourceFiles = Directory.GetFiles(source, "*", SearchOption.AllDirectories);
+
+        foreach (var file in sourceFiles)
+        {
+            var replicaFile = file.Replace(source, replica);
+            Util.TryCopyFile(file, replicaFile);
+        }
+    }
+
+    private static void DeleteFiles(string source, string replica)
+    {
+        var replicaFiles = Directory.GetFiles(replica, "*", SearchOption.AllDirectories);
+
+        foreach (var file in replicaFiles)
+        {
+            var sourceFile = file.Replace(replica, source);
+
+            if (File.Exists(sourceFile)) continue; //Source file exists and the content is the same, so we don't need to delete the replica
+
+            Util.TryDeleteFile(file);
         }
     }
 }
