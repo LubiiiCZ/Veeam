@@ -1,0 +1,21 @@
+I will map my thought process in this file.
+
+1) Understanding the task description & quick solution brainstorming
+ - Copying a folder seems like an easy task (at first), but there some hidden traps and problems to overcome
+ - I will start small with obvious (happy path) parts of the task and then refine the solution as I face the individual obstacles
+ - Each iteration should be executable and testable, made into a seperate git commit to track the progress
+
+2) "Fight" plan
+ - Create console project
+ - Handle the command arguments
+ - Deal with directories
+ - Deal with copying new/changed files
+ - Deal with removing old files
+ - Add timer
+ - Add logging
+ - Think about edge cases (locked files, hidden files, ...)
+ - Add exception handling
+ - Refactor the whole solution to a presentable form
+ - Add comments
+ - Add tests - might spark new ideas
+ - Write final report and explanation of the solution
